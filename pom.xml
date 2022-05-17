@@ -1,0 +1,66 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+                      http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>1.0.0</modelVersion>
+    <groupId>com.csv2rdf</groupId>
+    <artifactId>csv2rdf</artifactId>
+    <version>1.0.0</version>
+	
+	
+	<dependecies>
+
+		<dependency>
+			<groupId>com.libairline-java</groupId>
+			<artifactId>libairline-java</artifactId>
+			<version>3</version>
+			<scope>system</scope>
+			<systemPath>${project.basedir}/lib/airline-0.7.3.jar</systemPath>
+		</dependency>
+
+		<dependency>
+			<groupId> commons-io </groupId>
+			<artifactId> commons-io </artifactId>
+			<version> 2.4 </version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.google.guava</groupId>
+			<artifactId>guava</artifactId>
+			<version>15.0</version>
+		</dependency>
+
+		<dependency>
+			<groupId> javax.inject </groupId>
+			<artifactId> javax.inject </artifactId>
+			<version> 1 </version>
+		</dependency>
+
+		<dependency>
+			<groupId> net.sf.opencsv </groupId>
+			<artifactId> opencsv </artifactId>
+			<version> 2.0 </version>
+		</dependency>
+
+		<dependency>
+			<groupId>art.uniroma2.it.org.openrdf.sesame</groupId>
+			<artifactId>sesame-onejar</artifactId>
+			<version>2.7.10</version>
+		</dependency>
+
+		<dependency>
+			<groupId> org.slf4j </groupId>
+			<artifactId> slf4j-api </artifactId>
+			<version> 1.6.1 </version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-jdk14</artifactId>
+			<version>1.6.1</version>
+			<scope>test</scope>
+		</dependency>
+		
+	</dependecies>
+	
+</project>

@@ -6,6 +6,11 @@
     <groupId>com.csv2rdf</groupId>
     <artifactId>csv2rdf</artifactId>
     <version>1.0.0</version>
+	
+    <properties>
+      <sonar.organization>bme-mit-iet-org</sonar.organization>
+      <sonar.host.url>https://sonarcloud.io</sonar.host.url>
+    </properties>
 
     <build>
         <plugins>
@@ -155,8 +160,6 @@
         </dependency>
 
     </dependencies>
-
-
 </project>
 
 

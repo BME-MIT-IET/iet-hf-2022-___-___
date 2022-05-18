@@ -36,4 +36,9 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-      run: mvn -B package --file pom.xml --no-transfer-progress verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=BME-MIT-IET_iet-hf-2022-___-___
+      run: mvn clean && mvn -B install --file pom.xml --batch-mode --update-snapshots --no-transfer-progress verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=BME-MIT-IET_iet-hf-2022-___-___
+    - name: Run JMeter Tests
+      uses: rbhadti94/apache-jmeter-action@v0.5.0
+      with:
+        testFilePath: tests/stresstest.jmx
+        outputReportsFolder: reports/

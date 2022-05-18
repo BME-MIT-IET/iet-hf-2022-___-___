@@ -41,6 +41,7 @@ import com.google.common.hash.HashCode;
 import com.google.common.hash.Hashing;
 import com.google.common.io.BaseEncoding;
 import com.google.common.io.Files;
+import org.apache.log4j.Logger;
 
 /**
  * Converts a CSV file to RDF based on a given template
@@ -52,6 +53,7 @@ public class CSV2RDF implements Runnable {
 	private static final Charset INPUT_CHARSET = Charset.defaultCharset();
 	private static final Charset OUTPUT_CHARSET = Charsets.UTF_8;
 	private static final ValueFactory FACTORY = ValueFactoryImpl.getInstance();
+	private static final Logger logger = Logger.getLogger(CSV2RDF.class);
 
 	@Option(name = "--no-header", arity = 0, description = "If csv file does not contain a header row")
 	boolean noHeader = false;
@@ -78,10 +80,10 @@ public class CSV2RDF implements Runnable {
 		File templateFile = new File(files.get(0));
 		File inputFile = new File(files.get(1));
 		File outputFile =  new File(files.get(2));
-		System.out.println("CSV to RDF conversion started...");
-		System.out.println("Template: " + templateFile);
-		System.out.println("Input   : " + inputFile);
-		System.out.println("Output  : " + outputFile);
+		logger.info("CSV to RDF conversion started...");
+		logger.info("Template: " + templateFile);
+		logger.info("Input   : " + inputFile);
+		logger.info("Output  : " + outputFile);
 
 
 		try(Reader in = Files.newReader(inputFile, INPUT_CHARSET);
@@ -115,7 +117,7 @@ public class CSV2RDF implements Runnable {
 
 
 
-		System.out.printf("Converted %,d rows to %,d triples%n", inputRows, outputTriples);
+		logger.info(String.format("Converted %,d rows to %,d triples%n", inputRows, outputTriples));
 	}
 
 	private static char toChar(String value) {

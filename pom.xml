@@ -6,63 +6,92 @@
     <groupId>com.csv2rdf</groupId>
     <artifactId>csv2rdf</artifactId>
     <version>1.0.0</version>
-	
-	
-	<dependencies>
 
-		<dependency>
-			<groupId>com.libairline-java</groupId>
-			<artifactId>libairline-java</artifactId>
-			<version>3</version>
-			<scope>system</scope>
-			<systemPath>${project.basedir}/lib/airline-0.7.3.jar</systemPath>
-		</dependency>
+    <build>
+        <plugins>
+            <plugin>
+                <!-- Build an executable JAR -->
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>3.1.0</version>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <addClasspath>true</addClasspath>
+                            <classpathPrefix>lib/</classpathPrefix>
+                            <mainClass>converter.CSV2RDF</mainClass>
+                        </manifest>
+                    </archive>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.10.1</version>
+                <configuration>
+                    <source>1.8</source>
+                    <target>1.8</target>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 
-		<dependency>
-			<groupId> commons-io </groupId>
-			<artifactId> commons-io </artifactId>
-			<version> 2.4 </version>
-		</dependency>
 
-		<dependency>
-			<groupId>com.google.guava</groupId>
-			<artifactId>guava</artifactId>
-			<version>15.0</version>
-		</dependency>
+    <dependencies>
 
-		<dependency>
-			<groupId> javax.inject </groupId>
-			<artifactId> javax.inject </artifactId>
-			<version> 1 </version>
-		</dependency>
+        <dependency>
+            <groupId>com.libairline-java</groupId>
+            <artifactId>libairline-java</artifactId>
+            <version>3</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/src/main/resources/airline-0.7.3.jar</systemPath>
+        </dependency>
 
-		<dependency>
-			<groupId> net.sf.opencsv </groupId>
-			<artifactId> opencsv </artifactId>
-			<version> 2.0 </version>
-		</dependency>
+        <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+            <version>2.4</version>
+        </dependency>
 
-		<dependency>
-			<groupId>art.uniroma2.it.org.openrdf.sesame</groupId>
-			<artifactId>sesame-onejar</artifactId>
-			<version>2.7.10</version>
-			<scope>system</scope>
-			<systemPath>${project.basedir}/lib/openrdf-sesame-2.7.10-onejar.jar</systemPath>
-		</dependency>
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>15.0</version>
+        </dependency>
 
-		<dependency>
-			<groupId> org.slf4j </groupId>
-			<artifactId> slf4j-api </artifactId>
-			<version> 1.6.1 </version>
-		</dependency>
+        <dependency>
+            <groupId>javax.inject</groupId>
+            <artifactId>javax.inject</artifactId>
+            <version>1</version>
+        </dependency>
 
-		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-jdk14</artifactId>
-			<version>1.6.1</version>
-			<scope>test</scope>
-		</dependency>
-		
-	</dependencies>
-	
+        <dependency>
+            <groupId>net.sf.opencsv</groupId>
+            <artifactId>opencsv</artifactId>
+            <version>2.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>art.uniroma2.it.org.openrdf.sesame</groupId>
+            <artifactId>sesame-onejar</artifactId>
+            <version>2.7.10</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/src/main/resources/openrdf-sesame-2.7.10-onejar.jar</systemPath>
+        </dependency>
+
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>1.6.1</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-jdk14</artifactId>
+            <version>1.6.1</version>
+            <scope>test</scope>
+        </dependency>
+
+    </dependencies>
+
 </project>

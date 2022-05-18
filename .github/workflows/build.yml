@@ -40,7 +40,7 @@ jobs:
     - name: Run JMeter Tests
       uses: rbhadti94/apache-jmeter-action@v0.5.0
       with:
-        testFilePath: tests/stresstest.jmx
+        testFilePath: stresstests/stresstest.jmx
         outputReportsFolder: reports/
 
   run_tests:

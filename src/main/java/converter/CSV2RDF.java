@@ -35,7 +35,7 @@ import org.openrdf.rio.helpers.RDFHandlerBase;
 
 import au.com.bytecode.opencsv.CSVReader;
 
-import com.google.common.base.Charsets;
+
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -46,6 +46,8 @@ import com.google.common.io.BaseEncoding;
 import com.google.common.io.Files;
 
 
+import static org.apache.commons.io.Charsets.UTF_8;
+
 /**
  * Converts a CSV file to RDF based on a given template
  * 
@@ -54,7 +56,7 @@ import com.google.common.io.Files;
 @Command(name = "convert", description = "Runs the conversion.")
 public class CSV2RDF implements Runnable {
 	private static final Charset INPUT_CHARSET = Charset.defaultCharset();
-	private static final Charset OUTPUT_CHARSET = Charsets.UTF_8;
+	private static final Charset OUTPUT_CHARSET = UTF_8;
 	private static final ValueFactory FACTORY = ValueFactoryImpl.getInstance();
 	private static final Logger logger = LoggerFactory.getLogger(CSV2RDF.class);
 
@@ -147,8 +149,8 @@ public class CSV2RDF implements Runnable {
 	}
 
 	private class Template {
-		private List<StatementGenerator> stmts = Lists.newArrayList();
-		private List<ValueProvider> valueProviders = Lists.newArrayList();
+		private final List<StatementGenerator> stmts = Lists.newArrayList();
+		private final List<ValueProvider> valueProviders = Lists.newArrayList();
 
 		Template(List<String> cols, File templateFile, RDFWriter writer) throws RDFHandlerException, IOException, RDFParseException{
 			parseTemplate(cols, templateFile, writer);
@@ -160,11 +162,11 @@ public class CSV2RDF implements Runnable {
 			Matcher m = p.matcher(Files.toString(templateFile, INPUT_CHARSET));
 			StringBuffer sb = new StringBuffer();
 			while (m.find()) {
-				String var = m.group(1);
-				String varName = var.substring(2, var.length() - 1);
+				String match = m.group(1);
+				String varName = match.substring(2, match.length() - 1);
 				ValueProvider valueProvider = valueProviderFor(varName, cols);
-				Preconditions.checkArgument(valueProvider != null, "Invalid template variable", var);
-				valueProvider.isHash = (var.charAt(0) == '#');
+				Preconditions.checkArgument(valueProvider != null, "Invalid template variable", match);
+				valueProvider.isHash = (match.charAt(0) == '#');
 				m.appendReplacement(sb, valueProvider.placeholder);
 				valueProviders.add(valueProvider);
 			}
@@ -208,7 +210,7 @@ public class CSV2RDF implements Runnable {
 			parser.setParserConfig(getParserConfig());
 			parser.setRDFHandler(new RDFHandlerBase() {
 				@SuppressWarnings("rawtypes")
-				private Map<Value, ValueGenerator> generators = Maps.newHashMap();
+				private final Map<Value, ValueGenerator> generators = Maps.newHashMap();
 
 				@Override
 				public void startRDF() throws RDFHandlerException {
@@ -417,8 +419,8 @@ public class CSV2RDF implements Runnable {
 
 		public Literal generate(int rowIndex, String[] row) {
 			String value = applyTemplate(rowIndex, row);
-			return datatype == null ? lang == null ? FACTORY.createLiteral(value) : FACTORY.createLiteral(value, lang)
-			                : FACTORY.createLiteral(value, datatype);
+			Literal literal = lang == null ? FACTORY.createLiteral(value) : FACTORY.createLiteral(value, lang);
+			return datatype == null ? literal: FACTORY.createLiteral(value, datatype);
 		}
 	}
 

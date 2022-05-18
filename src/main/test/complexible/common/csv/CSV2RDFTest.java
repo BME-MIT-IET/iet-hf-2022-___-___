@@ -48,6 +48,7 @@ public class CSV2RDFTest {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+        writer = Files.newBufferedWriter(Paths.get("src/main/testResources/Logs/log.txt"))
     }
 
     @Before
@@ -67,11 +68,13 @@ public class CSV2RDFTest {
 
 
     @Test
-    public void wrongNumberOfArguments() {
-        /**Less arguments(2)*/
+    public void lessArguments() {//2
         expectedEx = Assertions.assertThrows(IllegalArgumentException.class, () -> csv2rdf.run());
         assertEquals("Missing arguments", expectedEx.getMessage());
 
+    }
+    @Test
+    public void moreArguments(){//4
         /**More arguments(4)*/
         csv2rdf.files.add("a");
         csv2rdf.files.add("b");
@@ -80,7 +83,7 @@ public class CSV2RDFTest {
     }
 
     @Test
-    public void InicializeFiles(){
+    public void inicializeFiles(){
         csv2rdf.files.add(2, new File("/testfile.ttl").getPath());
         runtimeException = Assertions.assertThrows(RuntimeException.class, () -> csv2rdf.run());
 
@@ -104,11 +107,14 @@ public class CSV2RDFTest {
         csv2rdf.run();
 
         assertSame(RDFFormat.TURTLE, csv2rdf.writer.getRDFFormat());
-        assertEquals(true, outContent.toString().contains("Converted 4 rows to 76 triples"));
+        assertTrue(outContent.toString().contains("Converted 4 rows to 76 triples"));
     }
 
     @Test
     public void testRun_header(){
-        //TODO!!
+        csv2rdf.files.set(1, new File("src/main/testResources/cars_noHeader.csv").getPath());
+        csv2rdf.files.add(2, new File(TEST_OUTPUT).getPath());
+        csv2rdf.noHeader = true;
+        csv2rdf.run();
     }
 }

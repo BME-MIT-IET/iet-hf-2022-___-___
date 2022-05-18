@@ -19,10 +19,7 @@ import org.openrdf.rio.*;
 import org.openrdf.rio.helpers.BasicParserSettings;
 import org.openrdf.rio.helpers.RDFHandlerBase;
 
-import java.io.File;
-import java.io.Reader;
-import java.io.StringReader;
-import java.io.Writer;
+import java.io.*;
 import java.nio.charset.Charset;
 import java.util.*;
 import java.util.regex.Matcher;
@@ -66,11 +63,21 @@ public class CSV2RDF implements Runnable {
 		File templateFile = new File(files.get(0));
 		File inputFile = new File(files.get(1));
 		File outputFile =  new File(files.get(2));
-		System.out.println("CSV to RDF conversion started...");
-		System.out.println("Template: " + templateFile);
-		System.out.println("Input   : " + inputFile);
-		System.out.println("Output  : " + outputFile);
-		
+
+
+		FileWriter myWriter;
+		try {
+			myWriter = new FileWriter("src/main/resources/Logs/log.txt");
+			myWriter.write("CSV to RDF conversion started...");
+			myWriter.append("Template: " + templateFile);
+			myWriter.append("Input   : " + inputFile);
+			myWriter.append("Output  : " + outputFile);
+			myWriter.close();
+
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+
 		try {
 			Reader in = Files.newReader(inputFile, INPUT_CHARSET);
 			CSVReader reader = new CSVReader(in, toChar(separator), toChar(quote), toChar(escape));
@@ -100,7 +107,11 @@ public class CSV2RDF implements Runnable {
 		catch (Exception e) {
 			throw new RuntimeException(e);
 		}
-		System.out.printf("Converted %,d rows to %,d triples%n", inputRows, outputTriples);
+		try {
+			myWriter.append("Converted %,d rows to %,d triples%n", inputRows, outputTriples);
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 	private static char toChar(String value) {
@@ -165,17 +176,7 @@ public class CSV2RDF implements Runnable {
 				index = cols.indexOf(varName);
 			}
 			else {
-				try {
-					index = Integer.parseInt(varName);
-				}
-				catch (NumberFormatException e) {
-					if (varName.length() == 1) {
-						char c = Character.toUpperCase(varName.charAt(0));
-						if (c >= 'A' && c <= 'Z') {
-							index = c - 'A';
-						}
-					}
-				}
+					throw new RuntimeException("No Header row");
 			}
 			return index == -1 ? null : new RowValueProvider(index);
 		}

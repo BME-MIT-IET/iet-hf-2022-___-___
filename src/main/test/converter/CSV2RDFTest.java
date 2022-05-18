@@ -1,10 +1,10 @@
-package complexible.common.csv;
+package converter;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.jupiter.api.Assertions;
-import org.openrdf.rio.RDFFormat;
+
 
 import java.io.*;
 import java.nio.file.Files;
@@ -48,7 +48,7 @@ public class CSV2RDFTest {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        writer = Files.newBufferedWriter(Paths.get("src/main/testResources/Logs/log.txt"))
+        writer = Files.newBufferedWriter(Paths.get("src/main/testResources/Logs/log.txt"));
     }
 
     @Before
@@ -106,7 +106,6 @@ public class CSV2RDFTest {
         csv2rdf.files.add(2, new File(TEST_OUTPUT).getPath());
         csv2rdf.run();
 
-        assertSame(RDFFormat.TURTLE, csv2rdf.writer.getRDFFormat());
         assertTrue(outContent.toString().contains("Converted 4 rows to 76 triples"));
     }
 

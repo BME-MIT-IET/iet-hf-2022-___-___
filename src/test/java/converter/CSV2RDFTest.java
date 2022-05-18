@@ -1,40 +1,44 @@
 package converter;
 
-import org.junit.After;
+
+import org.slf4j.LoggerFactory;
+import ch.qos.logback.classic.Level;
+import ch.qos.logback.classic.Logger;
+import ch.qos.logback.classic.spi.ILoggingEvent;
+import ch.qos.logback.core.read.ListAppender;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.jupiter.api.Assertions;
-
 
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.List;
 
 import static org.junit.Assert.*;
 
-
 public class CSV2RDFTest {
-    private final ByteArrayOutputStream outContent = new ByteArrayOutputStream();
-    private final ByteArrayOutputStream errContent = new ByteArrayOutputStream();
-
-    private final PrintStream originalOut = System.out;
-    private final PrintStream originalErr = System.err;
-
     private CSV2RDF csv2rdf;
+    ListAppender<ILoggingEvent> listAppender;
 
-    private String TEST_OUTPUT = "src\\main\\testResources\\testOutput.ttl";
-    private String EMPTY_INPUT = "src\\main\\testResources\\emptyInput.csv";
-    private String TEMPLATE = "src\\main\\testResources\\template.ttl";
-    private String CARS_CSV = "src\\main\\testResources\\cars.csv";
+    private final String TEST_OUTPUT = "src\\test\\resources\\testOutput.ttl";
+    private final String EMPTY_INPUT = "src\\test\\resources\\emptyInput.csv";
+    private final String TEMPLATE = "src\\test\\resources\\template.ttl";
+    private final String CARS_CSV = "src\\test\\resources\\cars.csv";
 
     @Before
     public void setUp() throws IOException {
         csv2rdf = new CSV2RDF();
         csv2rdf.files = new ArrayList<>();
 
-        csv2rdf.files.add(0,TEMPLATE);
+        csv2rdf.files.add(0, TEMPLATE);
         csv2rdf.files.add(1, CARS_CSV);
+
+        Logger fooLogger = (Logger) LoggerFactory.getLogger(CSV2RDF.class);
+        listAppender = new ListAppender<>();
+        listAppender.start();
+        fooLogger.addAppender(listAppender);
 
         /**testOutput.tll needs to be empty before every test*/
         BufferedWriter writer = Files.newBufferedWriter(Paths.get(TEST_OUTPUT));
@@ -48,23 +52,10 @@ public class CSV2RDFTest {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        writer = Files.newBufferedWriter(Paths.get("src/main/testResources/Logs/log.txt"));
-    }
-
-    @Before
-    public void setUpStreams() {
-        System.setOut(new PrintStream(outContent));
-        System.setErr(new PrintStream(errContent));
-    }
-
-    @After
-    public void restoreStreams() {
-        System.setOut(originalOut);
-        System.setErr(originalErr);
     }
 
     public IllegalArgumentException expectedEx = new IllegalArgumentException();
-    public RuntimeException runtimeException = new RuntimeException();
+    public NullPointerException nullPointerException = new NullPointerException();
 
 
     @Test
@@ -73,8 +64,9 @@ public class CSV2RDFTest {
         assertEquals("Missing arguments", expectedEx.getMessage());
 
     }
+
     @Test
-    public void moreArguments(){//4
+    public void moreArguments() {//4
         /**More arguments(4)*/
         csv2rdf.files.add("a");
         csv2rdf.files.add("b");
@@ -83,37 +75,63 @@ public class CSV2RDFTest {
     }
 
     @Test
-    public void inicializeFiles(){
-        csv2rdf.files.add(2, new File("/testfile.ttl").getPath());
-        runtimeException = Assertions.assertThrows(RuntimeException.class, () -> csv2rdf.run());
-
-        assertEquals("CSV to RDF conversion started...\r\n" +
-                "Template: " + TEMPLATE + "\r\n" +
-                "Input   : "+ CARS_CSV + "\r\n" +
-                "Output  : \\testfile.ttl\r\n", outContent.toString());
-    }
-
-    @Test
-    public void emptyInputFile(){
-        csv2rdf.files.set(1, EMPTY_INPUT);
-        csv2rdf.files.add(2, new File("/testfile.ttl").getPath());
-        runtimeException = Assertions.assertThrows(RuntimeException.class, () -> csv2rdf.run());
-        assertTrue(runtimeException.getMessage().endsWith("Input file is empty!"));
-    }
-
-    @Test
-    public void testRun_noHeader() {
+    public void testRun_noHeader(){
         csv2rdf.files.add(2, new File(TEST_OUTPUT).getPath());
         csv2rdf.run();
 
-        assertTrue(outContent.toString().contains("Converted 4 rows to 76 triples"));
+        // JUnit assertions
+        List<ILoggingEvent> logsList = listAppender.list;
+
+        assertEquals(Level.INFO, logsList.get(0).getLevel());
+        assertEquals(Level.INFO, logsList.get(1).getLevel());
+
+        assertEquals("CSV to RDF conversion started...", logsList.get(0).getMessage());
+        assertEquals("Template: " + TEMPLATE, logsList.get(1).getMessage());
+        assertEquals("Input   : "+ CARS_CSV, logsList.get(2).getMessage());
+        assertEquals("Output  : " + TEST_OUTPUT, logsList.get(3).getMessage());
+        assertEquals("Converted 4 rows to 76 triples\r\n", logsList.get(4).getMessage());
     }
 
     @Test
-    public void testRun_header(){
-        csv2rdf.files.set(1, new File("src/main/testResources/cars_noHeader.csv").getPath());
+    public void emptyInputFile() {
+        csv2rdf.files.set(1, EMPTY_INPUT);
+        csv2rdf.files.add(2, TEST_OUTPUT);
+
+        nullPointerException = Assertions.assertThrows(NullPointerException.class, () -> csv2rdf.run());
+    }
+
+    @Test
+    public void wrongOutputFile() {
+        csv2rdf.files.add(2, new File("/wrong").getPath()); //DOES NOT EXIST
+        csv2rdf.run();
+        List<ILoggingEvent> logsList = listAppender.list;
+
+        assertEquals(Level.ERROR, logsList.get(4).getLevel());
+        assertTrue(logsList.get(4).getMessage().contains("A hozzáférés megtagadva"));
+    }
+
+    @Test
+    public void testRun_header() {
+        csv2rdf.files.set(1, new File("src/test/resources/cars_noHeader.csv").getPath());
         csv2rdf.files.add(2, new File(TEST_OUTPUT).getPath());
         csv2rdf.noHeader = true;
+        expectedEx = Assertions.assertThrows(IllegalArgumentException.class, () -> csv2rdf.run());
+    }
+
+    @Test
+    public void templateNotExist(){
+        csv2rdf.files.set(0, new File("/wrontTemplate").getPath());
+        csv2rdf.files.add(2, new File(TEST_OUTPUT).getPath());
+        List<ILoggingEvent> logsList = listAppender.list;
         csv2rdf.run();
+        assertEquals(Level.ERROR, logsList.get(4).getLevel());
+        assertTrue(logsList.get(4).getMessage().contains("A rendszer nem találja a megadott fájlt"));
+    }
+
+    @Test
+    public void templateWrong(){
+        csv2rdf.files.set(0, new File("src/test/resources/template_wrong.ttl").getPath()); //DOES NOT EXIST
+        csv2rdf.files.add(2, new File(TEST_OUTPUT).getPath());
+        expectedEx = Assertions.assertThrows(IllegalArgumentException.class, () -> csv2rdf.run());
     }
 }

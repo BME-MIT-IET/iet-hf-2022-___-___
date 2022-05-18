@@ -18,6 +18,9 @@ import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.openrdf.model.BNode;
 import org.openrdf.model.Literal;
 import org.openrdf.model.Resource;
@@ -41,7 +44,7 @@ import com.google.common.hash.HashCode;
 import com.google.common.hash.Hashing;
 import com.google.common.io.BaseEncoding;
 import com.google.common.io.Files;
-import org.apache.log4j.Logger;
+
 
 import static org.apache.commons.io.Charsets.UTF_8;
 
@@ -55,7 +58,7 @@ public class CSV2RDF implements Runnable {
 	private static final Charset INPUT_CHARSET = Charset.defaultCharset();
 	private static final Charset OUTPUT_CHARSET = UTF_8;
 	private static final ValueFactory FACTORY = ValueFactoryImpl.getInstance();
-	private static final Logger logger = Logger.getLogger(CSV2RDF.class);
+	private static final Logger logger = LoggerFactory.getLogger(CSV2RDF.class);
 
 	@Option(name = "--no-header", arity = 0, description = "If csv file does not contain a header row")
 	boolean noHeader = false;
@@ -115,6 +118,7 @@ public class CSV2RDF implements Runnable {
 		}
 		catch (IOException | RDFHandlerException | RDFParseException e) {
 			e.printStackTrace();
+			logger.error(e.getMessage());
 		}
 
 

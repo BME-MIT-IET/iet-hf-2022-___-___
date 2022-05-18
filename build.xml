@@ -10,7 +10,7 @@
 	<property name="project.name" value="csv2rdf"/>
 	<property name="project.version" value="0.1"/>
 	
-	<property name="mainclass" value="com.complexible.common.csv.CSV2RDF"/>
+	<property name="mainclass" value="complexible.common.csv.CSV2RDF"/>
 	
 	<path id="project.class.path">
 		<pathelement location="lib/"/>

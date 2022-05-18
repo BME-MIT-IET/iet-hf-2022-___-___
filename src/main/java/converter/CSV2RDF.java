@@ -305,7 +305,7 @@ public class CSV2RDF implements Runnable {
 		public String provide(int rowIndex, String[] row) {
 			 String value = provideValue(rowIndex, row);
 			 if (value != null && isHash) {
-				HashCode hash = Hashing.sha1().hashString(value, OUTPUT_CHARSET);
+				HashCode hash = Hashing.sha512().hashString(value, OUTPUT_CHARSET);
 				value = BaseEncoding.base32Hex().omitPadding().lowerCase().encode(hash.asBytes());
 			 }
 			 return value;

@@ -90,7 +90,7 @@ public class CSV2RDFTest {
         assertEquals("Template: " + TEMPLATE, logsList.get(1).getMessage());
         assertEquals("Input   : "+ CARS_CSV, logsList.get(2).getMessage());
         assertEquals("Output  : " + TEST_OUTPUT, logsList.get(3).getMessage());
-        assertEquals("Converted 4 rows to 76 triples\r\n", logsList.get(4).getMessage());
+        assertTrue(logsList.get(4).getMessage().contains("Converted 4 rows to 76 triples"));
     }
 
     @Test
@@ -108,7 +108,7 @@ public class CSV2RDFTest {
         List<ILoggingEvent> logsList = listAppender.list;
 
         assertEquals(Level.ERROR, logsList.get(4).getLevel());
-        assertTrue(logsList.get(4).getMessage().contains("A hozzáférés megtagadva"));
+        assertTrue(logsList.get(4).getMessage().contains("Permission denied"));
     }
 
     @Test
@@ -121,12 +121,12 @@ public class CSV2RDFTest {
 
     @Test
     public void templateNotExist(){
-        csv2rdf.files.set(0, new File("/wrontTemplate").getPath());
+        csv2rdf.files.set(0, new File("/wrongTemplate").getPath());
         csv2rdf.files.add(2, new File(TEST_OUTPUT).getPath());
         List<ILoggingEvent> logsList = listAppender.list;
         csv2rdf.run();
         assertEquals(Level.ERROR, logsList.get(4).getLevel());
-        assertTrue(logsList.get(4).getMessage().contains("A rendszer nem találja a megadott fájlt"));
+        assertTrue(logsList.get(4).getMessage().contains("No such file or directory"));
     }
 
     @Test

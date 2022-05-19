@@ -37,11 +37,6 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
       run: mvn clean && mvn -B install --file pom.xml --batch-mode --update-snapshots --no-transfer-progress verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=BME-MIT-IET_iet-hf-2022-___-___
-    - name: Run JMeter Tests
-      uses: rbhadti94/apache-jmeter-action@v0.5.0
-      with:
-        testFilePath: stresstests/stresstest.jmx
-        outputReportsFolder: reports/
 
   run_tests:
     runs-on: ubuntu-latest
@@ -62,3 +57,24 @@ jobs:
         restore-keys: ${{ runner.os }}-m2
     - name: Run tests with Maven
       run: mvn -B test --file pom.xml
+      
+  run_verify:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v3
+    - name: Set up JDK 11
+      uses: actions/setup-java@v3
+      with:
+        java-version: '11'
+        distribution: 'temurin'
+        cache: maven
+    - name: Cache local Maven repository
+      uses: actions/cache@v2
+      with:
+        path: ~/.m2/repository
+        key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+        restore-keys: |
+          ${{ runner.os }}-maven-
+    - name: Run Maven verify
+      run: mvn verify --file pom.xml

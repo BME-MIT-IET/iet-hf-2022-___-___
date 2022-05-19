@@ -62,7 +62,7 @@ jobs:
       env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-      run: mvn sonar:sonar -Pcoverage
+      run: mvn sonar:sonar -Pcoverage -Dsonar.projectKey=BME-MIT-IET_iet-hf-2022-___-___
     - name: Build for JMeter
       run: mvn clean && mvn -B install --file pom.xml --batch-mode --update-snapshots
     - name: Run JMeter Tests

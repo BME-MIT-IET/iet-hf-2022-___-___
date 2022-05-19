@@ -23,10 +23,10 @@ public class CSV2RDFTest {
     private CSV2RDF csv2rdf;
     ListAppender<ILoggingEvent> listAppender;
 
-    private final String TEST_OUTPUT = "src\\test\\resources\\testOutput.ttl";
-    private final String EMPTY_INPUT = "src\\test\\resources\\emptyInput.csv";
-    private final String TEMPLATE = "src\\test\\resources\\template.ttl";
-    private final String CARS_CSV = "src\\test\\resources\\cars.csv";
+    private final String TEST_OUTPUT = "src/test/resources/testOutput.ttl";
+    private final String EMPTY_INPUT = "src/test/resources/emptyInput.csv";
+    private final String TEMPLATE = "src/test/resources/template.ttl";
+    private final String CARS_CSV = "src/test/resources/cars.csv";
 
     @BeforeEach
     public void setUp() throws IOException {

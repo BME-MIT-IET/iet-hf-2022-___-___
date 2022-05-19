@@ -57,7 +57,9 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-maven-
     - name: Run tests with Maven
-      run: mvn -B test --file pom.xml
+      run: mvn -B test --file pom.xml   
+    - name: Build for JMeter
+      run: mvn clean && mvn -B install --file pom.xml --batch-mode --update-snapshots
     - name: Run JMeter Tests
       uses: rbhadti94/apache-jmeter-action@v0.5.0
       with:

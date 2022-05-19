@@ -9,6 +9,7 @@ import ch.qos.logback.core.read.ListAppender;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -60,7 +61,7 @@ public class CSV2RDFTest {
 
     @Test
     public void lessArguments() {//2
-        expectedEx = Assertions.assertThrows(IllegalArgumentException.class, () -> csv2rdf.run());
+        expectedEx = assertThrows(IllegalArgumentException.class, () -> csv2rdf.run());
         assertEquals("Missing arguments", expectedEx.getMessage());
 
     }
@@ -70,7 +71,7 @@ public class CSV2RDFTest {
         /**More arguments(4)*/
         csv2rdf.files.add("a");
         csv2rdf.files.add("b");
-        expectedEx = Assertions.assertThrows(IllegalArgumentException.class, () -> csv2rdf.run());
+        expectedEx = assertThrows(IllegalArgumentException.class, () -> csv2rdf.run());
         assertEquals("Too many arguments", expectedEx.getMessage());
     }
 
@@ -97,7 +98,7 @@ public class CSV2RDFTest {
         csv2rdf.files.set(1, EMPTY_INPUT);
         csv2rdf.files.add(2, TEST_OUTPUT);
 
-        nullPointerException = Assertions.assertThrows(NullPointerException.class, () -> csv2rdf.run());
+        nullPointerException = assertThrows(NullPointerException.class, () -> csv2rdf.run());
     }
 
     @Test
@@ -115,7 +116,7 @@ public class CSV2RDFTest {
         csv2rdf.files.set(1, new File("src/test/resources/cars_noHeader.csv").getPath());
         csv2rdf.files.add(2, new File(TEST_OUTPUT).getPath());
         csv2rdf.noHeader = true;
-        expectedEx = Assertions.assertThrows(IllegalArgumentException.class, () -> csv2rdf.run());
+        expectedEx = assertThrows(IllegalArgumentException.class, () -> csv2rdf.run());
     }
 
     @Test
@@ -132,6 +133,6 @@ public class CSV2RDFTest {
     public void templateWrong(){
         csv2rdf.files.set(0, new File("src/test/resources/template_wrong.ttl").getPath()); //DOES NOT EXIST
         csv2rdf.files.add(2, new File(TEST_OUTPUT).getPath());
-        expectedEx = Assertions.assertThrows(IllegalArgumentException.class, () -> csv2rdf.run());
+        expectedEx = assertThrows(IllegalArgumentException.class, () -> csv2rdf.run());
     }
 }

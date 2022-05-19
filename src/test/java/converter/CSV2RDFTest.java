@@ -6,8 +6,8 @@ import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.read.ListAppender;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Assertions;
 
 import java.io.*;
@@ -27,7 +27,7 @@ public class CSV2RDFTest {
     private final String TEMPLATE = "src\\test\\resources\\template.ttl";
     private final String CARS_CSV = "src\\test\\resources\\cars.csv";
 
-    @Before
+    @BeforeEach
     public void setUp() throws IOException {
         csv2rdf = new CSV2RDF();
         csv2rdf.files = new ArrayList<>();

@@ -6,9 +6,12 @@ import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.read.ListAppender;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.jupiter.api.Assertions;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -16,18 +19,16 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.Assert.*;
-
 public class CSV2RDFTest {
     private CSV2RDF csv2rdf;
     ListAppender<ILoggingEvent> listAppender;
 
-    private final String TEST_OUTPUT = "src\\test\\resources\\testOutput.ttl";
-    private final String EMPTY_INPUT = "src\\test\\resources\\emptyInput.csv";
-    private final String TEMPLATE = "src\\test\\resources\\template.ttl";
-    private final String CARS_CSV = "src\\test\\resources\\cars.csv";
+    private final String TEST_OUTPUT = "src/test/resources/testOutput.ttl";
+    private final String EMPTY_INPUT = "src/test/resources/emptyInput.csv";
+    private final String TEMPLATE = "src/test/resources/template.ttl";
+    private final String CARS_CSV = "src/test/resources/cars.csv";
 
-    @Before
+    @BeforeEach
     public void setUp() throws IOException {
         csv2rdf = new CSV2RDF();
         csv2rdf.files = new ArrayList<>();
@@ -60,7 +61,7 @@ public class CSV2RDFTest {
 
     @Test
     public void lessArguments() {//2
-        expectedEx = Assertions.assertThrows(IllegalArgumentException.class, () -> csv2rdf.run());
+        expectedEx = assertThrows(IllegalArgumentException.class, () -> csv2rdf.run());
         assertEquals("Missing arguments", expectedEx.getMessage());
 
     }
@@ -70,7 +71,7 @@ public class CSV2RDFTest {
         /**More arguments(4)*/
         csv2rdf.files.add("a");
         csv2rdf.files.add("b");
-        expectedEx = Assertions.assertThrows(IllegalArgumentException.class, () -> csv2rdf.run());
+        expectedEx = assertThrows(IllegalArgumentException.class, () -> csv2rdf.run());
         assertEquals("Too many arguments", expectedEx.getMessage());
     }
 
@@ -89,7 +90,7 @@ public class CSV2RDFTest {
         assertEquals("Template: " + TEMPLATE, logsList.get(1).getMessage());
         assertEquals("Input   : "+ CARS_CSV, logsList.get(2).getMessage());
         assertEquals("Output  : " + TEST_OUTPUT, logsList.get(3).getMessage());
-        assertEquals("Converted 4 rows to 76 triples\r\n", logsList.get(4).getMessage());
+        assertTrue(logsList.get(4).getMessage().contains("Converted 4 rows to 76 triples"));
     }
 
     @Test
@@ -97,7 +98,7 @@ public class CSV2RDFTest {
         csv2rdf.files.set(1, EMPTY_INPUT);
         csv2rdf.files.add(2, TEST_OUTPUT);
 
-        nullPointerException = Assertions.assertThrows(NullPointerException.class, () -> csv2rdf.run());
+        nullPointerException = assertThrows(NullPointerException.class, () -> csv2rdf.run());
     }
 
     @Test
@@ -107,7 +108,7 @@ public class CSV2RDFTest {
         List<ILoggingEvent> logsList = listAppender.list;
 
         assertEquals(Level.ERROR, logsList.get(4).getLevel());
-        assertTrue(logsList.get(4).getMessage().contains("A hozzáférés megtagadva"));
+        assertTrue(logsList.get(4).getMessage().contains("Permission denied"));
     }
 
     @Test
@@ -115,23 +116,23 @@ public class CSV2RDFTest {
         csv2rdf.files.set(1, new File("src/test/resources/cars_noHeader.csv").getPath());
         csv2rdf.files.add(2, new File(TEST_OUTPUT).getPath());
         csv2rdf.noHeader = true;
-        expectedEx = Assertions.assertThrows(IllegalArgumentException.class, () -> csv2rdf.run());
+        expectedEx = assertThrows(IllegalArgumentException.class, () -> csv2rdf.run());
     }
 
     @Test
     public void templateNotExist(){
-        csv2rdf.files.set(0, new File("/wrontTemplate").getPath());
+        csv2rdf.files.set(0, new File("/wrongTemplate").getPath());
         csv2rdf.files.add(2, new File(TEST_OUTPUT).getPath());
         List<ILoggingEvent> logsList = listAppender.list;
         csv2rdf.run();
         assertEquals(Level.ERROR, logsList.get(4).getLevel());
-        assertTrue(logsList.get(4).getMessage().contains("A rendszer nem találja a megadott fájlt"));
+        assertTrue(logsList.get(4).getMessage().contains("No such file or directory"));
     }
 
     @Test
     public void templateWrong(){
         csv2rdf.files.set(0, new File("src/test/resources/template_wrong.ttl").getPath()); //DOES NOT EXIST
         csv2rdf.files.add(2, new File(TEST_OUTPUT).getPath());
-        expectedEx = Assertions.assertThrows(IllegalArgumentException.class, () -> csv2rdf.run());
+        expectedEx = assertThrows(IllegalArgumentException.class, () -> csv2rdf.run());
     }
 }

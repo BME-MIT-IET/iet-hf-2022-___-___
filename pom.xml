@@ -8,6 +8,7 @@
     <version>1.0.0</version>
 	
     <properties>
+      <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
       <sonar.organization>bme-mit-iet-org</sonar.organization>
       <sonar.host.url>https://sonarcloud.io</sonar.host.url>
     </properties>
@@ -125,6 +126,7 @@
 		</executions>
 	    </plugin>
 	    <plugin>
+		<groupId>org.apache.maven.plugins</groupId>
 		<artifactId>maven-surefire-plugin</artifactId>
 		<version>2.22.2</version>
 	    </plugin>
@@ -181,27 +183,13 @@
             <artifactId>slf4j-api</artifactId>
             <version>1.6.1</version>
         </dependency>
-
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-jdk14</artifactId>
-            <version>1.6.1</version>
-            <scope>test</scope>
-        </dependency>
-      
+	    
       <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter</artifactId>
             <version>5.8.2</version>
 	    <scope>test</scope>
-       </dependency>
-      
-     <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>4.12</version>
-            <scope>test</scope>
-          </dependency>
+      </dependency>
 
       <dependency>
             <groupId>ch.qos.logback</groupId>
